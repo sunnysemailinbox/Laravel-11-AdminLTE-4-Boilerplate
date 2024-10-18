@@ -7,6 +7,18 @@ use Illuminate\View\View;
 
 class GuestLayout extends Component
 {
+    public $page;
+
+    /**
+     * Create a new component instance.
+     *
+     * @return void
+     */
+    public function __construct($page = 'login-page')
+    {
+        $this->page = $page;
+    }
+
     /**
      * Get the view / contents that represents the component.
      */

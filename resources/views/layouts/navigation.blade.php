@@ -109,6 +109,19 @@
                 <li class="nav-item"> <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}"> <i class="nav-icon bi bi-speedometer"></i>
                         <p>{{ __('Dashboard') }}</p>
                     </a> </li>
+                <li class="nav-header">USERS</li>
+                <li class="nav-item">
+                    <a href="{{ route('users.index') }}" class="nav-link">
+                        <i class="nav-icon bi bi-users"></i>
+                        <p>User Listing</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('users.create') }}" class="nav-link">
+                        <i class="nav-icon bi bi-user-plus"></i>
+                        <p>Create User</p>
+                    </a>
+                </li>
             </ul> <!--end::Sidebar Menu-->
         </nav>
     </div> <!--end::Sidebar Wrapper-->

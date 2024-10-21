@@ -11,9 +11,29 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Repositories\User\UserRepositoryInterface;
+use App\Repositories\Role\RoleRepositoryInterface;
 
 class RegisteredUserController extends Controller
 {
+    private $userRepository;
+    private $roleRepository;
+
+    /**
+     * RegisteredUserController constructor.
+     *
+     * @param UserRepositoryInterface $userRepository
+     * @param RoleRepositoryInterface $roleRepository
+     */
+    public function __construct(
+        UserRepositoryInterface $userRepository,
+        RoleRepositoryInterface $roleRepository
+    )
+    {
+        $this->userRepository = $userRepository;
+        $this->roleRepository = $roleRepository;
+    }
+
     /**
      * Display the registration view.
      */
@@ -35,11 +55,16 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
+        $userRole = $this->roleRepository->findByField('name', 'user');
+
+        $data = [
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-        ]);
+            'role_id' => $userRole->id
+        ];
+
+        $user = $this->userRepository->create($data);
 
         event(new Registered($user));
 

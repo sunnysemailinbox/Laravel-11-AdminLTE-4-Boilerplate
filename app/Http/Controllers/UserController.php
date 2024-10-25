@@ -6,9 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use App\Http\Requests\User\SearchUserRequest;
 use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
 use App\Repositories\User\UserRepositoryInterface;
 use App\Repositories\Role\RoleRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Gate;
 
 class UserController extends Controller
 {
@@ -31,10 +36,16 @@ class UserController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * List Users
+     * 
+     * Display a listing of the users.
+     * 
+     * @return View
      */
     public function index(): View
     {
+        Gate::authorize('viewAny', User::class);
+
         return view('user.index');
     }
 
@@ -50,13 +61,15 @@ class UserController extends Controller
      * @queryParam order array Array of the order "column" index and "dir" Example: [[column => 2], [dir => 'desc']]
      * @queryParam columns array Array of the columns "data" Example: [data => 'email']
      *
-     * @responseFile responses/user/suborganizations.json
+     * @responseFile responses/user/users.json
      *
      * @param SearchUserRequest $searchUserRequest
      * @return JsonResponse
      */
     public function getDatatablesResources(SearchUserRequest $searchUserRequest): JsonResponse
     {
+        Gate::authorize('viewAny', User::class);
+
         $data = $searchUserRequest->validated();
         $users = $this->userRepository->search($data);
 
@@ -69,10 +82,16 @@ class UserController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show Create User Page
+     * 
+     * Show the form for creating a new user.
+     * 
+     * @return View
      */
     public function create(): View
     {
+        Gate::authorize('create', User::class);
+
         $roles = $this->roleRepository->all();
         return view('user.create', ['roles' => $roles]);
     }
@@ -87,43 +106,88 @@ class UserController extends Controller
      * @bodyParam role integer required Id of the role Example: 1
      * 
      * @param StoreUserRequest $storeUserRequest
+     * @return RedirectResponse
      */
-    public function store(StoreUserRequest $storeUserRequest)
+    public function store(StoreUserRequest $storeUserRequest): RedirectResponse
     {
+        Gate::authorize('store', User::class);
+
         $data = $storeUserRequest->validated();
         $this->userRepository->createUser($data);
-        return redirect('/users');
+        return Redirect::route('users.index')->with('status', 'user-saved');
     }
 
     /**
-     * Display the specified resource.
+     * Display User
+     *
+     * Display the specified user.
+     *
+     * @urlParam user required The Id of a user Example: 1
+     *
+     * @param User $user
+     * @return View
      */
-    public function show(string $id)
+    public function show(User $user): View
     {
-        //
+        Gate::authorize('view', $user);
+
+        return view('user.view', ['user' => $user]);
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Edit User Form
+     *
+     * Show the form for editing the specified user
+     *
+     * @urlParam user required The Id of a user Example: 1
+     *
+     * @param User $user
+     * @return View
      */
-    public function edit(string $id)
+    public function edit(User $user): View
     {
-        //
+        Gate::authorize('edit', $user);
+
+        $roles = $this->roleRepository->all();
+        return view('user.edit', ['roles' => $roles, 'user' => $user]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update User
+     *
+     * Update the specified user in storage.
+     *
+     * @urlParam user required The Id of a user Example: 1
+     *
+     * @param UpdateUserRequest $updateUserRequest
+     * @param User $user
+     * @return RedirectResponse
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateUserRequest $updateUserRequest, User $user): RedirectResponse
     {
-        //
+        Gate::authorize('update', $user);
+
+        $data = $updateUserRequest->validated();
+        $this->userRepository->updateUser($user, $data);
+
+        return Redirect::route('users.index')->with('status', 'user-updated');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove User
+     *
+     * Remove the specified user from storage.
+     *
+     * @urlParam user required The Id of a user Example: 1
+     *
+     * @param User $user
+     * @return RedirectResponse
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
-        //
+        Gate::authorize('delete', $user);
+
+        $this->userRepository->deleteUser($user);
+        return Redirect::route('users.index')->with('status', 'user-deleted');
     }
 }

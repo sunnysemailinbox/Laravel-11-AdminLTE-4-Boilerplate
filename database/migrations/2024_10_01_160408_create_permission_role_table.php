@@ -14,11 +14,16 @@ return new class extends Migration
         Schema::create('permission_role', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('role_id');
-            $table->foreign('role_id')->references('id')->on('roles');
+            $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->unsignedBigInteger('permission_id');
             $table->foreign('permission_id')->references('id')->on('permissions');
             $table->timestamps();
         });
+
+        \Artisan::call('db:seed', [
+            '--class' => PermissionRoleSeeder::class,
+            '--force' => true
+        ]);
     }
 
     /**

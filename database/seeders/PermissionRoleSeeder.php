@@ -15,6 +15,6 @@ class PermissionRoleSeeder extends Seeder
     {
         $permissions = Permission::pluck('id')->toArray();
         $role = Role::find(1);
-        $role->permissions()->detach($permissions);
+        $role->permissions()->attach($permissions);
     }
 }

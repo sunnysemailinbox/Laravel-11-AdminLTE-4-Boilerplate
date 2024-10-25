@@ -6,6 +6,8 @@ use App\Repositories\BaseRepository;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
 
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
@@ -41,7 +43,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         }
 
         // Handle sorting
-        if ($data['order']) {
+        if (isset($data['order'])) {
             $orderColumn = $data['columns'][$data['order'][0]['column']]['data'];
             $orderDirection = $data['order'][0]['dir'];
             $query->orderBy($orderColumn, $orderDirection);
@@ -65,6 +67,65 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         // Hash the password
         $data['password'] = Hash::make($password);
 
+        // Store the file in the `public/avatars` directory
+        $data['avatar'] = $data['avatar']->store('avatars', 'public');
+
         return $this->create($data);
+    }
+
+    /**
+     * To update a user
+     *
+     * @param $data
+     * @param $data
+     * @return User
+     */
+    public function updateUser(User $user, $data)
+    {
+        if(isset($data['avatar'])) {
+            // Store the file in the `public/avatars` directory
+            $data['avatar'] = $data['avatar']->store('avatars', 'public');
+
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+        }
+
+        return $user->update($data);
+    }
+
+    /**
+     * To delete a user
+     *
+     * @param User $user
+     */
+    public function deleteUser(User $user)
+    {
+        if ($user->avatar) {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        $user->delete();
+    }
+
+    /**
+     * Check if user has the specified permission
+     *
+     * @param $user
+     * @param $permission
+     * @return boolean
+     */
+    public function hasPermissionTo($user, $permission)
+    {
+        $hasPermissionTo =  $user->role()
+                            ->whereHas('permissions', function (Builder $query) use ($permission) {
+                                $query->where('name', '=', $permission);
+                            })->get();
+
+        if ($hasPermissionTo->count()) {
+            return true;
+        }
+
+        return false;
     }
 }

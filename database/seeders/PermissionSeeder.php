@@ -20,6 +20,15 @@ class PermissionSeeder extends Seeder
             ["name" => "user:edit", "display_name" => "Edit User", "feature" => "User"],
             ["name" => "user:update", "display_name" => "Update User", "feature" => "User"],
             ["name" => "user:destroy", "display_name" => "Delete User", "feature" => "User"],
+            ["name" => "role:index", "display_name" => "List Roles", "feature" => "Role"],
+            ["name" => "role:create", "display_name" => "Create Role", "feature" => "Role"],
+            ["name" => "role:store", "display_name" => "Save Role", "feature" => "Role"],
+            ["name" => "role:show", "display_name" => "Show Role", "feature" => "Role"],
+            ["name" => "role:edit", "display_name" => "Edit Role", "feature" => "Role"],
+            ["name" => "role:update", "display_name" => "Update Role", "feature" => "Role"],
+            ["name" => "role:destroy", "display_name" => "Delete Role", "feature" => "Role"],
+            ["name" => "role:edit-permissions", "display_name" => "Edit Permissions", "feature" => "Role"],
+            ["name" => "role:update-permissions", "display_name" => "Update Permissions", "feature" => "Role"],
         ];
 
         Permission::insert($permissionsData);

@@ -1,13 +1,13 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="col-sm-6">
-            <h3 class="mb-0">Create User</h3>
+            <h3 class="mb-0">Edit Role</h3>
         </div>
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-end">
                 <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">
-					Create User
+					Edit Role
                 </li>
             </ol>
         </div>
@@ -16,53 +16,33 @@
     <div class="row g-4"> <!--begin::Col-->
 		<div class="col-12">
 			 <!--begin::Form Validation-->
-			<div class="card card-primary card-outline mb-4"><!--begin::Form-->
-				<form id="createUserForm" action="{{ route('users.store') }}" method="POST" class="needs-validation" novalidate enctype="multipart/form-data"> <!--begin::Body-->
+			<div class="card card-primary card-outline mb-4">
+				<!--begin::Form-->
+				<form id="createRoleForm" action="{{ route('roles.update', ['role' => $role->id]) }}" method="POST" class="needs-validation" novalidate> <!--begin::Body-->
 					@csrf
+					@method('PUT')
 					<div class="card-body"> <!--begin::Row-->
-						<div class="row g-3"> <!--begin::Col-->
+						<div class="row g-3">
 							<!--begin::Col-->
 							<div class="col-md-7">
 								<x-input-label for="name" :value="__('Name')" />
-								<x-text-input id="name" name="name" type="text" :value="old('name')" required autofocus autocomplete="name" />
+								<x-text-input id="name" name="name" type="text" :value="old('name', $role->name)" required autofocus autocomplete="name" />
 								<x-input-error class="d-block" :messages="$errors->get('name')" />
 								<x-input-error :messages="['Please enter name.']" />
 							</div>
 							<!--end::Col-->
 							<!--begin::Col-->
 							<div class="col-md-7">
-								<x-input-label for="email" :value="__('Email')" />
-								<x-text-input id="email" name="email" type="email" :value="old('email')" required autocomplete="username" />
-								<x-input-error class="d-block" :messages="$errors->get('email')" />
-								<x-input-error :messages="['Please enter email.']" />
+								<x-input-label for="display_name" value="Display Name" />
+								<x-text-input id="display_name" name="display_name" type="text" :value="old('display_name', $role->display_name)" required autocomplete="name" />
+								<x-input-error class="d-block" :messages="$errors->get('display_name')" />
+								<x-input-error :messages="['Please enter display name.']" />
 							</div>
-							<!--end::Col-->
-							<!--begin::Col-->
-							<div class="col-md-7">
-								<x-input-label for="role_id" value="Role" />
-								<x-select-input id="role_id" name="role_id" required>
-									@if ($roles)
-										@foreach ($roles as $role)
-											<option {{ $role->id === old('role_id') ? "selected" : "" }} value="{{ $role->id }}">{{ $role->display_name }}</option>
-										@endforeach
-									@endif
-								</x-select-input>
-								<x-input-error class="d-block" :messages="$errors->get('role_id')" />
-								<x-input-error :messages="['Please select role.']" />
-							</div>
-							<!--begin::Col-->
-							<div class="col-md-7">
-								<x-input-label for="avatar" value="Avatar" />
-								<x-text-input id="avatar" name="avatar" type="file" required />
-								<x-input-error class="d-block" :messages="$errors->get('avatar')" />
-								<x-input-error :messages="['Please select avatar.']" />
-							</div>
-							<!--end::Col-->
 						</div> <!--end::Row-->
 					</div> <!--end::Body--> <!--begin::Footer-->
 					<div class="card-footer">
 						<x-button class="btn-primary" type="submit">
-							Create User
+							Update Role
 						</x-button>
 					</div> <!--end::Footer-->
 				</form> <!--end::Form--> <!--begin::JavaScript-->

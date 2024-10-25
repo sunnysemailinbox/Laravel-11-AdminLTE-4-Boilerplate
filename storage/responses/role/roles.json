@@ -1,0 +1,17 @@
+{
+    "draw": "1",
+    "recordsTotal": 2,
+    "recordsFiltered": 2,
+    "data": [
+        {
+            "id": 1,
+            "name": "admin",
+            "display_name": "Admin"
+        },
+        {
+            "id": 2,
+            "name": "user",
+            "display_name": "User"
+        }
+    ]
+}

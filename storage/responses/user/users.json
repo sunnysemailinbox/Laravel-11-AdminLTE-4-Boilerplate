@@ -1,0 +1,19 @@
+{
+    "draw": "1",
+    "recordsTotal": 2,
+    "recordsFiltered": 2,
+    "data": [
+        {
+            "id": 1,
+            "name": "fahad",
+            "email": "fahad@nxb.com",
+            "role_display_name": "User"
+        },
+        {
+            "id": 2,
+            "name": "faheem",
+            "email": "faheem@gmail.com",
+            "role_display_name": "Admin"
+        }
+    ]
+}

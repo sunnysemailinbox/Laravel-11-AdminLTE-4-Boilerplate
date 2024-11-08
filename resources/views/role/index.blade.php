@@ -4,7 +4,7 @@
             <h3 class="mb-0">Roles</h3>
         </div>
         <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-end">
+            <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">
                     Roles
@@ -36,56 +36,25 @@
                             </tr>
                         </tfoot>
                     </table>
-                    @if (session('status') === 'role-saved')
-                        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                            <div id="savedToast" class="toast toast-success" role="alert" aria-live="assertive" aria-atomic="true">
-                                <div class="toast-header">
-                                    <strong class="me-auto">{{ __('Saved.') }}</strong>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
 
-                    @if (session('status') === 'role-updated')
-                        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                            <div id="updatedToast" class="toast toast-success" role="alert" aria-live="assertive" aria-atomic="true">
-                                <div class="toast-header">
-                                    <strong class="me-auto">{{ __('Updated.') }}</strong>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    @if (session('status') === 'role-deleted' || session('status') === 'role-user-exists')
-                        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                            <div id="deletedToast" class="toast toast-danger" role="alert" aria-live="assertive" aria-atomic="true">
-                                <div class="toast-header">
-                                    <strong class="me-auto">
-                                        @if (session('status') === 'role-deleted')
-                                            Deleted
-                                        @elseif (session('status') === 'role-user-exists')
-                                            Cannot delete role because users are assigned to it.
-                                        @endif
-                                    </strong>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    <x-modal id="confirmRoleDeletionModal" :show="$errors->roleDeletion->isNotEmpty()" focusable>
+                    <x-modal id="confirmRoleDeletionModal" :show="$errors->roleDeletion->isNotEmpty()">
                         <form  id="roleDeletionForm" method="post">
                             @csrf
                             @method('delete')
 
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">{{ __('Are you sure you want to delete role ?') }}</h1>
-                                <x-button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></x-button>
+                                <h4 class="modal-title" id="exampleModalLabel">{{ __('Are you sure you want to delete role ?') }}</h4>
+                                <x-button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </x-button>
                             </div>
                             <div class="modal-body">
-                                {{ __('Once role is deleted, all of its resources and data will be permanently deleted.') }}
+                                <p>
+                                    {{ __('Once role is deleted, all of its resources and data will be permanently deleted.') }}
+                                </p>
                             </div>
-                            <div class="modal-footer">
-                                <x-button class="btn-secondary" type="button" data-bs-dismiss="modal">
+                            <div class="modal-footer justify-content-between">
+                                <x-button class="btn-secondary" type="button" data-dismiss="modal">
                                     {{ __('Cancel') }}
                                 </x-button>
                                 <x-button class="btn-danger" type="submit">
@@ -99,28 +68,39 @@
         </div>
     </div> <!--end::Row-->
     @push('styles')
-        <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+        <!-- DataTables -->
+        <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/toastr/toastr.min.css') }}">
     @endpush
     @push('scripts')
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-        <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+        <!-- DataTables  & Plugins -->
+        <script src="{{ asset('vendor/adminlte/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ asset('vendor/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+        <script src="{{ asset('vendor/adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+        <script src="{{ asset('vendor/adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
         <script>
             @if (session('status') === 'role-saved')
-                const toastEle = document.getElementById("savedToast");
-                const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastEle);
-                toastBootstrap.show();
+                toastr.success('{{ __('Saved.') }}')
             @endif
 
             @if (session('status') === 'role-updated')
-                const toastEle = document.getElementById("updatedToast");
-                const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastEle);
-                toastBootstrap.show();
+                toastr.success('{{ __('Updated.') }}')
             @endif
 
             @if (session('status') === 'role-deleted'  || session('status') === 'role-user-exists')
-                const toastEle = document.getElementById("deletedToast");
-                const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastEle);
-                toastBootstrap.show();
+                @php
+                    $message = '';
+
+                    if(session('status') === 'role-deleted') {
+                        $message = 'Deleted';
+                    }
+                    else if (session('status') === 'role-user-exists') {
+                        $message = 'Cannot delete role because users are assigned to it.';
+                    }
+                @endphp
+
+                toastr.error('{{ $message }}')
             @endif
 
             new DataTable('#roles', {
@@ -159,7 +139,7 @@
             }
 
             $(function() {
-                $('.dt-length').html('<a href="{{ route('roles.create') }}" class="btn btn-primary">Create Role</a>');
+                $('.dataTables_length').html('<a href="{{ route('roles.create') }}" class="btn btn-primary">Create Role</a>');
             });
         </script> <!--end::JavaScript-->
     @endpush

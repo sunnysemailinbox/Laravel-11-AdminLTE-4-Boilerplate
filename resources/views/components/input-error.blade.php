@@ -2,8 +2,8 @@
 
 @if ($messages)
     @foreach ((array) $messages as $message)
-        <div {{ $attributes->merge(['class' => 'invalid-feedback']) }}>
+        <span {{ $attributes->merge(['class' => 'error invalid-feedback']) }}>
             {{ $message }}
-        </div>
+        </span>
     @endforeach
 @endif

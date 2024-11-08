@@ -8,6 +8,8 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\UserCreated;
 
 class UserRepository extends BaseRepository implements UserRepositoryInterface
 {
@@ -70,7 +72,9 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         // Store the file in the `public/avatars` directory
         $data['avatar'] = $data['avatar']->store('avatars', 'public');
 
-        return $this->create($data);
+        $user = $this->create($data);
+        // Mail::to($user->email)->send(new UserCreated($user));
+        return $user;
     }
 
     /**

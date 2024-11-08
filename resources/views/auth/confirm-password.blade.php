@@ -5,13 +5,20 @@
             <div class="lockscreen-name">{{ auth()->user()->name }}</div>
         @endif
         <div class="lockscreen-item">
-            <form class="lockscreen-credentials needs-validation" method="POST" action="{{ route('password.confirm') }}" novalidate>
+            @if (auth()->check())
+                <!-- lockscreen image -->
+                <div class="lockscreen-image">
+                    <img src="{{ Auth::user()->avatar_url }}" alt="User Image">
+                </div>
+                <!-- /.lockscreen-image -->
+            @endif
+            <form id="confirmPasswordForm" class="lockscreen-credentials" method="POST" action="{{ route('password.confirm') }}">
                 @csrf
                 <div class="input-group">
-                    <x-text-input class="shadow-none" id="password" name="password" type="password" placeholder="{{ __('Password') }}" required autocomplete="current-password" />
-                    <div class="input-group-text border-0 bg-transparent px-1">
-                        <x-button class="shadow-none" type="submit">
-                            <i class="bi bi-box-arrow-right text-body-secondary"></i>
+                    <x-text-input id="password" name="password" type="password" placeholder="{{ __('Password') }}" required autocomplete="current-password" />
+                    <div class="input-group-append">
+                        <x-button type="submit">
+                            <i class="fas fa-arrow-right text-muted"></i>
                         </x-button>
                     </div>
                     <x-input-error class="d-block" :messages="$errors->get('password')" />
@@ -25,10 +32,43 @@
         <div class="lockscreen-footer text-center">
             Copyright © 2014-2024 &nbsp;
             <b>
-                <a href="{{ url('/') }}" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">{{ config('app.name', 'Laravel') }}</a>
+                <a href="{{ url('/dashboard') }}" class="text-black">{{ config('app.name', 'Laravel') }}</a>
             </b>
             <br>
             All rights reserved
         </div>
     </div>
+    @push('scripts')
+        <!-- jquery-validation -->
+        <script src="{{ asset('vendor/adminlte/plugins/jquery-validation/jquery.validate.min.js') }}"></script>
+        <script>
+            $(function () {
+                $('#confirmPasswordForm').validate({
+                    rules: {
+                        password: {
+                            required: true,
+                            minlength: 5
+                        }
+                    },
+                    messages: {
+                        password: {
+                            required: "Please provide a password",
+                            minlength: "Your password must be at least 5 characters long"
+                        }
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function (error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.input-group').append(error);
+                    },
+                    highlight: function (element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function (element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    }
+                });
+            });
+        </script> <!--end::JavaScript-->
+    @endpush
 </x-guest-layout>

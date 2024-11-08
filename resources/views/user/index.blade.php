@@ -4,7 +4,7 @@
             <h3 class="mb-0">Users</h3>
         </div>
         <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-end">
+            <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">
                     Users
@@ -38,53 +38,28 @@
                             </tr>
                         </tfoot>
                     </table>
-                    @if (session('status') === 'user-saved')
-                        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                            <div id="savedToast" class="toast toast-success" role="alert" aria-live="assertive" aria-atomic="true">
-                                <div class="toast-header">
-                                    <strong class="me-auto">{{ __('Saved.') }}</strong>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
 
-                    @if (session('status') === 'user-updated')
-                        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                            <div id="updatedToast" class="toast toast-success" role="alert" aria-live="assertive" aria-atomic="true">
-                                <div class="toast-header">
-                                    <strong class="me-auto">{{ __('Updated.') }}</strong>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    @if (session('status') === 'user-deleted')
-                        <div class="toast-container position-fixed bottom-0 end-0 p-3">
-                            <div id="deletedToast" class="toast toast-danger" role="alert" aria-live="assertive" aria-atomic="true">
-                                <div class="toast-header">
-                                    <strong class="me-auto">Deleted</strong>
-                                </div>
-                            </div>
-                        </div>
-                    @endif
-
-                    <x-modal id="confirmUserDeletionModal" :show="$errors->userDeletion->isNotEmpty()" focusable>
+                    <x-modal id="confirmUserDeletionModal" :show="$errors->userDeletion->isNotEmpty()">
                         <form  id="userDeletionForm" method="post">
                             @csrf
                             @method('delete')
 
                             <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">{{ __('Are you sure you want to delete user ?') }}</h1>
-                                <x-button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></x-button>
+                                <h4 class="modal-title" id="exampleModalLabel">{{ __('Are you sure you want to delete user ?') }}</h4>
+                                <x-button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </x-button>
                             </div>
                             <div class="modal-body">
-                                {{ __('Once user is deleted, all of its resources and data will be permanently deleted.') }}
+                                <p>
+                                    {{ __('Once user is deleted, all of its resources and data will be permanently deleted.') }}
+                                </p>
                             </div>
-                            <div class="modal-footer">
-                                <x-button class="btn-secondary" type="button" data-bs-dismiss="modal">
+                            <div class="modal-footer justify-content-between">
+                                <x-button class="btn btn-secondary" type="button" data-dismiss="modal">
                                     {{ __('Cancel') }}
                                 </x-button>
-                                <x-button class="btn-danger" type="submit">
+                                <x-button class="btn btn-danger" type="submit">
                                     {{ __('Delete User') }}
                                 </x-button>
                             </div>
@@ -95,28 +70,29 @@
         </div>
     </div> <!--end::Row-->
     @push('styles')
-        <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+        <!-- DataTables -->
+        <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+        <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/toastr/toastr.min.css') }}">
     @endpush
     @push('scripts')
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-        <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+        <!-- DataTables  & Plugins -->
+        <script src="{{ asset('vendor/adminlte/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+        <script src="{{ asset('vendor/adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+        <script src="{{ asset('vendor/adminlte/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+        <script src="{{ asset('vendor/adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+        <script src="{{ asset('vendor/adminlte/plugins/toastr/toastr.min.js') }}"></script>
         <script>
             @if (session('status') === 'user-saved')
-                const toastEle = document.getElementById("savedToast");
-                const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastEle);
-                toastBootstrap.show();
+                toastr.success('{{ __('Saved.') }}')
             @endif
 
             @if (session('status') === 'user-updated')
-                const toastEle = document.getElementById("updatedToast");
-                const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastEle);
-                toastBootstrap.show();
+                toastr.success('{{ __('Updated.') }}')
             @endif
 
             @if (session('status') === 'user-deleted')
-                const toastEle = document.getElementById("deletedToast");
-                const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastEle);
-                toastBootstrap.show();
+                toastr.error('Deleted.')
             @endif
 
             new DataTable('#users', {
@@ -154,7 +130,7 @@
             }
 
             $(function() {
-                $('.dt-length').html('<a href="{{ route('users.create') }}" class="btn btn-primary">Create User</a>');
+                $('.dataTables_length').html('<a href="{{ route('users.create') }}" class="btn btn-primary">Create User</a>');
             });
         </script> <!--end::JavaScript-->
     @endpush

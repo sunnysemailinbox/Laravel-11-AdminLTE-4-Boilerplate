@@ -4,7 +4,7 @@
             <h3 class="mb-0">{{ __('Profile') }}</h3>
         </div>
         <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-end">
+            <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">
                     {{ __('Profile') }}
@@ -13,7 +13,7 @@
         </div>
     </x-slot>
 
-    <div class="row g-4"> <!--begin::Col-->
+    <div class="row"> <!--begin::Col-->
         <div class="col-12">
             @include('profile.partials.update-profile-information-form')
             @include('profile.partials.update-password-form')

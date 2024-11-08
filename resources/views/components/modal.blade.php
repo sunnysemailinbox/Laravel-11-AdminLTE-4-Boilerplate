@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div {{ $attributes->merge(['class' => 'modal fade']) }} tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div {{ $attributes->merge(['class' => 'modal fade']) }}>
   <div class="modal-dialog">
     <div class="modal-content">
         {{ $slot }}

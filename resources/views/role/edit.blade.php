@@ -4,7 +4,7 @@
             <h3 class="mb-0">Edit Role</h3>
         </div>
         <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-end">
+            <ol class="breadcrumb float-sm-right">
                 <li class="breadcrumb-item"><a href="{{ url('/dashboard') }}">Home</a></li>
                 <li class="breadcrumb-item active" aria-current="page">
 					Edit Role
@@ -13,30 +13,28 @@
         </div>
     </x-slot>
 
-    <div class="row g-4"> <!--begin::Col-->
+    <div class="row"> <!--begin::Col-->
 		<div class="col-12">
 			 <!--begin::Form Validation-->
 			<div class="card card-primary card-outline mb-4">
 				<!--begin::Form-->
-				<form id="createRoleForm" action="{{ route('roles.update', ['role' => $role->id]) }}" method="POST" class="needs-validation" novalidate> <!--begin::Body-->
+				<form id="editRoleForm" action="{{ route('roles.update', ['role' => $role->id]) }}" method="POST"> <!--begin::Body-->
 					@csrf
 					@method('PUT')
 					<div class="card-body"> <!--begin::Row-->
-						<div class="row g-3">
+						<div class="col-md-7">
 							<!--begin::Col-->
-							<div class="col-md-7">
+							<div class="form-group">
 								<x-input-label for="name" :value="__('Name')" />
 								<x-text-input id="name" name="name" type="text" :value="old('name', $role->name)" required autofocus autocomplete="name" />
 								<x-input-error class="d-block" :messages="$errors->get('name')" />
-								<x-input-error :messages="['Please enter name.']" />
 							</div>
 							<!--end::Col-->
 							<!--begin::Col-->
-							<div class="col-md-7">
+							<div class="form-group">
 								<x-input-label for="display_name" value="Display Name" />
 								<x-text-input id="display_name" name="display_name" type="text" :value="old('display_name', $role->display_name)" required autocomplete="name" />
 								<x-input-error class="d-block" :messages="$errors->get('display_name')" />
-								<x-input-error :messages="['Please enter display name.']" />
 							</div>
 						</div> <!--end::Row-->
 					</div> <!--end::Body--> <!--begin::Footer-->
@@ -50,31 +48,40 @@
 		</div> <!--end::Col-->
 	</div> <!--end::Row-->
 	@push('scripts')
+		<!-- jquery-validation -->
+		<script src="{{ asset('vendor/adminlte/plugins/jquery-validation/jquery.validate.min.js') }}"></script>
 		<script>
-			// Example starter JavaScript for disabling form submissions if there are invalid fields
-			(() => {
-				"use strict";
-
-				// Fetch all the forms we want to apply custom Bootstrap validation styles to
-				const forms =
-					document.querySelectorAll(".needs-validation");
-
-				// Loop over them and prevent submission
-				Array.from(forms).forEach((form) => {
-					form.addEventListener(
-						"submit",
-						(event) => {
-							if (!form.checkValidity()) {
-								event.preventDefault();
-								event.stopPropagation();
-							}
-
-							form.classList.add("was-validated");
-						},
-						false
-					);
-				});
-			})();
+			$(function () {
+                $('#editRoleForm').validate({
+                    rules: {
+						name: {
+                            required: true
+                        },
+                        display_name: {
+                            required: true
+                        }
+                    },
+                    messages: {
+						name: {
+                            required: "Please enter a name"
+                        },
+                        display_name: {
+                            required: "Please enter a display name"
+                        }
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function (error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-group').append(error);
+                    },
+                    highlight: function (element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function (element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    }
+                });
+            });
 		</script> <!--end::JavaScript-->
     @endpush
 </x-app-layout>

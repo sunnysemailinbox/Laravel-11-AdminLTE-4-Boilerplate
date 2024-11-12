@@ -18,7 +18,7 @@ class UserCreated extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(protected User $user)
+    public function __construct(protected User $user, protected $password)
     {
         //
     }
@@ -43,7 +43,8 @@ class UserCreated extends Mailable
             with: [
                 'userName' => $this->user->name,
                 'userEmail' => $this->user->email,
-                'userAvatar' => Storage::path($this->user->avatar),
+                'userAvatar' => Storage::disk('public')->path($this->user->avatar),
+                'userPassword' => $this->password
             ],
         );
     }

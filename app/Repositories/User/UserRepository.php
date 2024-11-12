@@ -73,7 +73,7 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
         $data['avatar'] = $data['avatar']->store('avatars', 'public');
 
         $user = $this->create($data);
-        // Mail::to($user->email)->send(new UserCreated($user));
+        Mail::to($user->email)->send(new UserCreated($user, $password));
         return $user;
     }
 

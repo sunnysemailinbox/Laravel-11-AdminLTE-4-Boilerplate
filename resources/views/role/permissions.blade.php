@@ -17,7 +17,7 @@
 	<form id="updateRolePermissionsForm" action="{{ route('roles.update.permissions', ['role' => $roleId]) }}" method="POST"> <!--begin::Body-->
 		@csrf
 		@method('patch')
-		<div class="card card-primary card-outline">
+		<div class="card card-primary card-outline permissions-card">
 			<div class="card-header">
 				<div class="row"> <!--begin::Col-->
 					<div class="col-4">
@@ -92,6 +92,11 @@
 	</form> <!--end::Form-->
 	@push('styles')
         <link rel="stylesheet" href="{{ asset('vendor/adminlte/plugins/toastr/toastr.min.css') }}">
+		<style>
+			.permissions-card {
+				min-height: 70vh;
+			}
+		</style>
     @endpush
 	@push('scripts')
 		<script src="{{ asset('vendor/adminlte/plugins/toastr/toastr.min.js') }}"></script>
